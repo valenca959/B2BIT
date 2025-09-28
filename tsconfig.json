@@ -6,13 +6,11 @@
     "module": "ESNext",
     "skipLibCheck": true,
 
-    /* Configuração do Shadcn para Aliases */
     "baseUrl": ".",
     "paths": {
       "@/components/*": ["src/components/*"],
       "@/lib/*": ["src/lib/*"]
     },
-    /* Fim da Configuração do Shadcn */
 
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
