@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { mockLogin } from "@/services/apiMock";
+import { mockLogin } from "@/services/apiMock"; 
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -12,14 +12,11 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 
-
 const loginSchema = z.object({
   email: z.string().email("E-mail inválido. Por favor, use um formato válido."),
   password: z.string().min(6, "A senha deve ter pelo menos 6 caracteres."),
 });
-
 type LoginFormValues = z.infer<typeof loginSchema>;
-
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -37,23 +34,18 @@ export default function LoginPage() {
   const { handleSubmit, register, formState } = form;
   const { errors } = formState;
 
-
   const onSubmit = async (values: LoginFormValues) => {
     setIsLoading(true);
     setError(null);
-
     try {
       const response = await mockLogin(values.email, values.password);
-
       localStorage.setItem("access_token", response.access_token);
       localStorage.setItem("refresh_token", response.refresh_token);
-
       navigate("/profile", { replace: true });
     } catch (err: any) {
       const errorMessage = 
         err?.response?.data?.detail || 
         "Falha na autenticação. Por favor, verifique suas credenciais.";
-        
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -63,10 +55,10 @@ export default function LoginPage() {
   return (
     <div className="flex h-screen items-center justify-center bg-gray-100 p-4 sm:p-6">
       
-      <Card className="w-full max-w-sm rounded-xl shadow-xl p-8"> 
+      <Card className="w-full max-w-sm rounded-xl shadow-2xl p-8"> 
         <CardContent className="flex flex-col items-center p-0">
           
-          <h1 className="text-4xl font-bold mb-8 mt-4">
+          <h1 className="text-3xl font-medium mb-8 mt-4"> 
             <span className="text-b2bit-primary">b2b</span>
             <span className="text-b2bit-secondary">it</span>
           </h1>
@@ -79,7 +71,7 @@ export default function LoginPage() {
             </Alert>
           )}
 
-          <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-6"> 
             
             <div className="space-y-2">
               <Label htmlFor="email">E-mail</Label>
@@ -88,7 +80,9 @@ export default function LoginPage() {
                 type="email"
                 placeholder="@gmail.com"
                 {...register("email")}
-                className={`bg-input-background border-none focus:ring-b2bit-primary ${errors.email ? 'ring-2 ring-destructive' : ''}`}
+                className={`h-10 bg-input-background border-none shadow-none 
+                            focus:ring-b2bit-primary focus:ring-2
+                            ${errors.email ? 'ring-2 ring-destructive' : ''}`}
               />
               {errors.email && (
                 <p className="text-sm text-destructive">{errors.email.message}</p>
@@ -102,7 +96,9 @@ export default function LoginPage() {
                 type="password"
                 placeholder="************"
                 {...register("password")}
-                className={`bg-input-background border-none focus:ring-b2bit-primary ${errors.password ? 'ring-2 ring-destructive' : ''}`}
+                className={`h-10 bg-input-background border-none shadow-none 
+                            focus:ring-b2bit-primary focus:ring-2
+                            ${errors.password ? 'ring-2 ring-destructive' : ''}`}
               />
               {errors.password && (
                 <p className="text-sm text-destructive">{errors.password.message}</p>
@@ -111,7 +107,7 @@ export default function LoginPage() {
 
             <Button 
               type="submit" 
-              className="w-full bg-b2bit-primary hover:bg-blue-900 text-white font-semibold py-2 mt-6"
+              className="w-full bg-b2bit-primary hover:bg-blue-900 text-white font-semibold h-12 mt-6"
               disabled={isLoading}
             >
               {isLoading ? "Entrando..." : "Sign In"}

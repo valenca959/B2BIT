@@ -12,11 +12,12 @@ const PROFILE_RESPONSE = {
     id: 1,
     name: 'Cliente YouDrive',
     email: 'cliente@youdrive.com',
-    profile_picture_url: 'https://i.pravatar.cc/150?img=1',
+    profile_picture_url: 'https://i.pravatar.cc/150?img=1', 
     role: 'user',
 };
 
 const MOCK_DELAY = 1000; 
+
 
 export async function mockLogin(email: string, password: string): Promise<LoginResponse> {
     return new Promise((resolve, reject) => {
@@ -36,7 +37,7 @@ export async function mockLogin(email: string, password: string): Promise<LoginR
 }
 
 export async function mockGetProfile(): Promise<typeof PROFILE_RESPONSE> {
-    return new new Promise((resolve) => {
+    return new Promise((resolve) => {
         setTimeout(() => {
             resolve(PROFILE_RESPONSE);
         }, MOCK_DELAY);
