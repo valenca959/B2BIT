@@ -1,19 +1,22 @@
+// src/pages/LoginPage.tsx (VERSÃO COM O LOGO ATUALIZADO)
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { mockLogin } from "@/services/apiMock"; 
-
+import { mockLogin } from "../services/apiMock";
+import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
+
+import logoImage from '../assets/b2bit.png';
 
 const loginSchema = z.object({
-  email: z.string().email("E-mail inválido. Por favor, use um formato válido."),
+  email: z.string().email("E-mail inválido."),
   password: z.string().min(6, "A senha deve ter pelo menos 6 caracteres."),
 });
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -23,16 +26,9 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const form = useForm<LoginFormValues>({
+  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
   });
-
-  const { handleSubmit, register, formState } = form;
-  const { errors } = formState;
 
   const onSubmit = async (values: LoginFormValues) => {
     setIsLoading(true);
@@ -43,81 +39,62 @@ export default function LoginPage() {
       localStorage.setItem("refresh_token", response.refresh_token);
       navigate("/profile", { replace: true });
     } catch (err: any) {
-      const errorMessage = 
-        err?.response?.data?.detail || 
-        "Falha na autenticação. Por favor, verifique suas credenciais.";
-      setError(errorMessage);
+      setError(err?.response?.data?.detail || "Falha na autenticação.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="flex h-screen items-center justify-center bg-gray-100 p-4 sm:p-6">
-      
-      <Card className="w-full max-w-sm rounded-xl shadow-2xl p-8"> 
-        <CardContent className="flex flex-col items-center p-0">
-          
-          <h1 className="text-3xl font-medium mb-8 mt-4"> 
-            <span className="text-b2bit-primary">b2b</span>
-            <span className="text-b2bit-secondary">it</span>
-          </h1>
+    <div className="flex h-screen items-center justify-center bg-gray-100 font-sans">
+      <Card className="w-[380px] rounded-xl p-10 text-center shadow-lg">
+        <CardContent className="p-0">
+
+          <img
+            src={logoImage}
+            alt="B2B IT Logo"
+            className="mx-auto mb-8 w-40"
+          />
 
           {error && (
-            <Alert variant="destructive" className="mb-4">
+            <Alert variant="destructive" className="mb-4 text-left">
               <ExclamationTriangleIcon className="h-4 w-4" />
-              <AlertTitle>Erro ao Entrar</AlertTitle>
+              <AlertTitle>Erro</AlertTitle>
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
 
-          <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-6"> 
-            
-            <div className="space-y-2">
-              <Label htmlFor="email">E-mail</Label>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 text-left">
+            <div className="space-y-1">
+              <Label htmlFor="email" className="font-bold">E-mail</Label>
               <Input
                 id="email"
                 type="email"
                 placeholder="@gmail.com"
                 {...register("email")}
-                className={`h-10 bg-input-background border-none shadow-none 
-                            focus:ring-b2bit-primary focus:ring-2
-                            ${errors.email ? 'ring-2 ring-destructive' : ''}`}
+                className="bg-gray-100"
               />
-              {errors.email && (
-                <p className="text-sm text-destructive">{errors.email.message}</p>
-              )}
+              {errors.email && <p className="text-sm text-red-600">{errors.email.message}</p>}
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1">
               <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
                 type="password"
                 placeholder="************"
                 {...register("password")}
-                className={`h-10 bg-input-background border-none shadow-none 
-                            focus:ring-b2bit-primary focus:ring-2
-                            ${errors.password ? 'ring-2 ring-destructive' : ''}`}
+                className="bg-gray-100"
               />
-              {errors.password && (
-                <p className="text-sm text-destructive">{errors.password.message}</p>
-              )}
+              {errors.password && <p className="text-sm text-red-600">{errors.password.message}</p>}
             </div>
 
-            <Button 
-              type="submit" 
-              className="w-full bg-b2bit-primary hover:bg-blue-900 text-white font-semibold h-12 mt-6"
-              disabled={isLoading}
-            >
+            <Button type="submit" className="w-full bg-b2bit-primary text-lg hover:bg-b2bit-hover" disabled={isLoading}>
               {isLoading ? "Entrando..." : "Sign In"}
             </Button>
-
           </form>
-          
         </CardContent>
       </Card>
-      
     </div>
   );
 }
